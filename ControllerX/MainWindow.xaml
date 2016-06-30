@@ -1,0 +1,36 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ControllerX"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock" x:Class="ControllerX.MainWindow"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="557.5" Width="985">
+    <Grid>
+        <GroupBox x:Name="groupBox" Header="Control" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="242" Width="245">
+            <Grid Margin="0">
+                <Button x:Name="button" Content="Discover Devices" Margin="10" VerticalAlignment="Top" Click="button_Click" Height="30"/>
+                <Button x:Name="button1" Content="Initialize Controller" Margin="10,45,10,0" VerticalAlignment="Top" Click="button1_Click" Height="30"/>
+                <xctk:IntegerUpDown x:Name="deadzone" HorizontalAlignment="Right" Margin="0,115,10,0" VerticalAlignment="Top" Width="84" Height="30" Value="5000" ClipValueToMinMax="True" Minimum="0" Maximum="32767" ValueChanged="deadzone_ValueChanged"/>
+                <Label x:Name="label" Content="Stick Deadzone" Margin="10,115,99,0" VerticalAlignment="Top" Height="30"/>
+                <xctk:IntegerUpDown x:Name="sensitivity" HorizontalAlignment="Right" Margin="0,150,10,0" VerticalAlignment="Top" Width="84" Height="30" Value="2000" ClipValueToMinMax="True" Minimum="0" Maximum="32767" ValueChanged="sensitivity_ValueChanged"/>
+                <Label x:Name="label_Copy" Content="Sensitivity (px/sec)" Margin="10,150,99,0" VerticalAlignment="Top" Height="30"/>
+                <xctk:IntegerUpDown x:Name="sensitivityTHreshold" HorizontalAlignment="Right" Margin="0,185,10,0" VerticalAlignment="Top" Width="84" Height="30" Value="5000" ClipValueToMinMax="True" Minimum="0" Maximum="32767" ValueChanged="sensitivityTHreshold_ValueChanged"/>
+                <Label x:Name="label_Copy1" Content="Sensitivity Threshold" Margin="10,185,99,0" VerticalAlignment="Top" Height="30"/>
+                <Label x:Name="label_Copy2" Content="Sensitivity Scaling" Margin="10,80,114,0" VerticalAlignment="Top" Height="30"/>
+                <ComboBox x:Name="comboSensitivityScale" HorizontalAlignment="Right" Margin="124,80,10,0" VerticalAlignment="Top" Width="99" Height="30" SelectedIndex="2" Loaded="comboSensitivityScale_Loaded" SelectionChanged="comboSensitivityScale_SelectionChanged">
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="groupBox1" Header="Debug" HorizontalAlignment="Left" Margin="260,10,0,10" Width="707">
+            <StackPanel Margin="10,10,-2,-12">
+                <Label x:Name="thumbL" Content="Label" FontFamily="Consolas" FontSize="18.667"/>
+                <Label x:Name="thumbR" Content="Label" FontFamily="Consolas" FontSize="18.667"/>
+                <Label x:Name="output" Content="Label" FontFamily="Consolas" FontSize="18.667"/>
+                <Label x:Name="cursor" Content="Label" FontFamily="Consolas" FontSize="18.667"/>
+            </StackPanel>
+        </GroupBox>
+
+    </Grid>
+</Window>
