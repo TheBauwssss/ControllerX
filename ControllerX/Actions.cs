@@ -37,7 +37,22 @@ namespace ControllerX
 
         public override void Execute(State state, GamepadButtonFlags mapping)
         {
-            throw new NotImplementedException();
+            if (state.Gamepad.Buttons.HasFlag(mapping))
+            {
+                if (!CurrentState)
+                {
+                    CurrentState = true;
+                    Simulator.Keyboard.KeyDown(Key);
+                }
+            }
+            else
+            {
+                if (CurrentState)
+                {
+                    CurrentState = false;
+                    Simulator.Keyboard.KeyUp(Key);
+                }
+            }
         }
     }
 
@@ -53,7 +68,54 @@ namespace ControllerX
 
         public override void Execute(State state, GamepadButtonFlags mapping)
         {
-            throw new NotImplementedException();
+
+            if (state.Gamepad.Buttons.HasFlag(mapping))
+            {
+                if (!CurrentState)
+                {
+                    CurrentState = true;
+
+                    switch (Option)
+                    {
+                        case MouseOption.Left:
+                            Simulator.Mouse.LeftButtonDown();
+                            break;
+                        case MouseOption.Right:
+                            Simulator.Mouse.RightButtonDown();
+                            break;
+                        case MouseOption.ScrollUp:
+                            Simulator.Mouse.VerticalScroll(1);
+                            break;
+                        case MouseOption.ScrollDown:
+                            Simulator.Mouse.VerticalScroll(-1);
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                if (CurrentState)
+                {
+                    CurrentState = false;
+
+                    switch (Option)
+                    {
+                        case MouseOption.Left:
+                            Simulator.Mouse.LeftButtonUp();
+                            break;
+                        case MouseOption.Right:
+                            Simulator.Mouse.RightButtonUp();
+                            break;
+                        case MouseOption.ScrollUp:
+                            //nothing
+                            break;
+                        case MouseOption.ScrollDown:
+                            //nothing
+                            break;
+                    }
+                }
+            
+            }
         }
     }
 }

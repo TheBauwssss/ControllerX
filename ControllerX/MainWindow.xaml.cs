@@ -115,37 +115,21 @@ namespace ControllerX
 
             thumbL.Content = string.Format("Thumbstick Left:\n\t\tX: {0}\n\t\tY: {1}\n\t\tM: {2}", Math.Round(x, precision), Math.Round(y, precision), Math.Round(magnitude, precision));
 
-            //if (x < -1*threshold)
-            //    sim.Keyboard.KeyDown(VirtualKeyCode.VK_A); //left
-            //else sim.Keyboard.KeyUp(VirtualKeyCode.VK_A);
-
-            //if (x > threshold)
-            //    sim.Keyboard.KeyDown(VirtualKeyCode.VK_D); //right
-            //else sim.Keyboard.KeyUp(VirtualKeyCode.VK_D);
-
-            //if (y < -1 * threshold)
-            //    sim.Keyboard.KeyDown(VirtualKeyCode.VK_S); //down
-            //else sim.Keyboard.KeyUp(VirtualKeyCode.VK_S);
-
-            //if (y > threshold)
-            //    sim.Keyboard.KeyDown(VirtualKeyCode.VK_W); //up
-            //else sim.Keyboard.KeyUp(VirtualKeyCode.VK_W);
-
-            if (x < -1 * threshold)
-                sim.Keyboard.KeyDown(VirtualKeyCode.LEFT); //left
-            else sim.Keyboard.KeyUp(VirtualKeyCode.LEFT);
+            if (x < -1*threshold)
+                sim.Keyboard.KeyDown(VirtualKeyCode.VK_A); //left
+            else sim.Keyboard.KeyUp(VirtualKeyCode.VK_A);
 
             if (x > threshold)
-                sim.Keyboard.KeyDown(VirtualKeyCode.RIGHT); //right
-            else sim.Keyboard.KeyUp(VirtualKeyCode.RIGHT);
+                sim.Keyboard.KeyDown(VirtualKeyCode.VK_D); //right
+            else sim.Keyboard.KeyUp(VirtualKeyCode.VK_D);
 
             if (y < -1 * threshold)
-                sim.Keyboard.KeyDown(VirtualKeyCode.UP); //down
-            else sim.Keyboard.KeyUp(VirtualKeyCode.UP);
+                sim.Keyboard.KeyDown(VirtualKeyCode.VK_S); //down
+            else sim.Keyboard.KeyUp(VirtualKeyCode.VK_S);
 
             if (y > threshold)
-                sim.Keyboard.KeyDown(VirtualKeyCode.DOWN); //up
-            else sim.Keyboard.KeyUp(VirtualKeyCode.DOWN);
+                sim.Keyboard.KeyDown(VirtualKeyCode.VK_W); //up
+            else sim.Keyboard.KeyUp(VirtualKeyCode.VK_W);
 
         }
 
@@ -181,6 +165,60 @@ namespace ControllerX
 
         private bool ldown = false;
         private bool rdown = false;
+
+        private bool a_state = false;
+        private bool b_state = false;
+        private bool x_state = false;
+        private bool y_state = false;
+
+        private bool back_state = false;
+        private bool start_state = false;
+
+        private bool l_shoulder_state = false;
+        private bool r_shoulder_state = false;
+
+        public void CheckKey(State state, GamepadButtonFlags button, ref bool state_var, VirtualKeyCode key)
+        {
+            if (state.Gamepad.Buttons.HasFlag(button))
+            {
+                if (!state_var)
+                {
+                    state_var = true;
+                    sim.Keyboard.KeyDown(key);
+                }
+            }
+            else
+            {
+                if (state_var)
+                {
+                    state_var = false;
+                    sim.Keyboard.KeyUp(key);
+                }
+            }
+        }
+
+        
+
+        public void CheckKey(State state, GamepadButtonFlags button, ref bool state_var, System.Action action_down, System.Action action_up)
+        {
+           
+            if (state.Gamepad.Buttons.HasFlag(button))
+            {
+                if (!state_var)
+                {
+                    state_var = true;
+                    action_down?.Invoke();
+                }
+            }
+            else
+            {
+                if (state_var)
+                {
+                    state_var = false;
+                    action_up?.Invoke();
+                }
+            }
+        }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
@@ -231,6 +269,30 @@ namespace ControllerX
                 }
             }
 
+            //CheckKey(state, GamepadButtonFlags.A, ref a_state, VirtualKeyCode.SPACE);
+            CheckKey(state, GamepadButtonFlags.B, ref b_state, VirtualKeyCode.ESCAPE);
+            //CheckKey(state, GamepadButtonFlags.X, ref b_state, VirtualKeyCode.SPACE);
+            CheckKey(state, GamepadButtonFlags.Y, ref y_state, VirtualKeyCode.SPACE);
+
+            CheckKey(state, GamepadButtonFlags.Back, ref back_state, VirtualKeyCode.VK_E);
+            CheckKey(state, GamepadButtonFlags.Start, ref start_state, VirtualKeyCode.ESCAPE);
+
+
+
+            CheckKey(state, GamepadButtonFlags.LeftShoulder, ref l_shoulder_state, ()=>
+            {
+                sim.Mouse.HorizontalScroll(-3);
+            }, null);
+
+            CheckKey(state, GamepadButtonFlags.RightShoulder, ref r_shoulder_state, () =>
+            {
+                sim.Mouse.HorizontalScroll(3);
+            }, null);
+
+
+            
+
+
             b.AppendFormat("Triggers: \n\t R:\t{0}\n\t L:\t{1}\n", triggerR, triggerL);
 
             //Right stick
@@ -245,7 +307,6 @@ namespace ControllerX
             b.AppendLine("Buttons: " + string.Format("{0}", state.Gamepad.Buttons));
 
             output.Content = b;
-
         }
 
         void Test(State state)
@@ -260,16 +321,14 @@ namespace ControllerX
 
             //b.AppendFormat("X:{0}\t{1}\n", LX, LY);
 
-            
 
             //determine how far the controller is pushed
-            double magnitude = Math.Sqrt(LX * LX + LY * LY);
+            double magnitude = Math.Sqrt(LX*LX + LY*LY);
 
-            
 
             //determine the direction the controller is pushed
-            double normalizedLX = LX / magnitude;
-            double normalizedLY = LY / magnitude;
+            double normalizedLX = LX/magnitude;
+            double normalizedLY = LY/magnitude;
 
 
             //test
@@ -281,11 +340,11 @@ namespace ControllerX
             else
                 normX -= INPUT_DEADZONE;
 
-            normX = normX/(32767-INPUT_DEADZONE);
+            normX = normX/(32767 - INPUT_DEADZONE);
 
 
             double normalizedMagnitude = 0;
-            
+
 
             //check if the controller is outside a circular dead zone
             if (magnitude > INPUT_DEADZONE)
@@ -298,14 +357,12 @@ namespace ControllerX
 
                 //optionally normalize the magnitude with respect to its expected range
                 //giving a magnitude value of 0.0 to 1.0
-                normalizedMagnitude = magnitude / (32767 - INPUT_DEADZONE);
+                normalizedMagnitude = magnitude/(32767 - INPUT_DEADZONE);
             }
             else //if the controller is in the deadzone zero out the magnitude
             {
                 clipped = true;
-             
             }
-
 
 
             var m = Math.Round(magnitude, 1);
@@ -338,7 +395,7 @@ namespace ControllerX
 
         private void comboSensitivityScale_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ThumbStickHandler.MovementScaling scaling = (ThumbStickHandler.MovementScaling)Enum.Parse(typeof(ThumbStickHandler.MovementScaling), (sender as ComboBox).SelectedItem.ToString(), true);
+            ThumbStickHandler.MovementScaling scaling = (ThumbStickHandler.MovementScaling) Enum.Parse(typeof (ThumbStickHandler.MovementScaling), (sender as ComboBox).SelectedItem.ToString(), true);
 
             left.Scaling = scaling;
             right.Scaling = scaling;
@@ -349,8 +406,8 @@ namespace ControllerX
             if (sender == null || left == null || right == null)
                 return;
 
-            left.InputDeadzone = (int)(sender as IntegerUpDown).Value;
-            right.InputDeadzone = (int)(sender as IntegerUpDown).Value;
+            left.InputDeadzone = (int) (sender as IntegerUpDown).Value;
+            right.InputDeadzone = (int) (sender as IntegerUpDown).Value;
         }
 
         private void sensitivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -358,7 +415,7 @@ namespace ControllerX
             if (sender == null)
                 return;
 
-            maxSpeed = (int)(sender as IntegerUpDown).Value;
+            maxSpeed = (int) (sender as IntegerUpDown).Value;
         }
 
         private void sensitivityTHreshold_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -366,9 +423,8 @@ namespace ControllerX
             if (sender == null || left == null || right == null)
                 return;
 
-            left.SensitivityThreshold = (int)(sender as IntegerUpDown).Value;
-            right.SensitivityThreshold = (int)(sender as IntegerUpDown).Value;
+            left.SensitivityThreshold = (int) (sender as IntegerUpDown).Value;
+            right.SensitivityThreshold = (int) (sender as IntegerUpDown).Value;
         }
-
     }
 }

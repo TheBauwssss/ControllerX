@@ -48,7 +48,9 @@ namespace ControllerX
 
             mapping._controlMapping.Add(Mapping.Create(GamepadButtonFlags.RightShoulder, new MouseAction(Action.MouseOption.Left)));
             mapping._controlMapping.Add(Mapping.Create(GamepadButtonFlags.LeftShoulder, new MouseAction(Action.MouseOption.Right)));
-            mapping._controlMapping.Add(Mapping.Create(GamepadButtonFlags.B, )
+
+            //mapping._controlMapping.Add(Mapping.Create(GamepadButtonFlags., new MouseAction(Action.MouseOption.Right)));
+            //mapping._controlMapping.Add(Mapping.Create(GamepadButtonFlags.LeftShoulder, new MouseAction(Action.MouseOption.Right)));
 
             //mapping._controlMapping.Add(Mapping.Create(GamepadButtonFlags., new MouseAction(Action.MouseOption.Left)));
 
