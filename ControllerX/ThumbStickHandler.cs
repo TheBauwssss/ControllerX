@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ControllerX
 {
-    class ThumbStickHandler
+    public class ThumbStickHandler
     {
         public ThumbStickHandler()
         {
@@ -34,6 +34,12 @@ namespace ControllerX
         /// <param name="magnitude">normalized movement of the stick, 0 to 1</param>
         public delegate void OnThumbStickMovedEventHandler(decimal x, decimal y, decimal magnitude);
         public event OnThumbStickMovedEventHandler OnThumbStickMoved;
+
+        /// <summary>
+        /// Raised when the thumbstick is released.
+        /// </summary>
+        public delegate void OnThumbStickReleasedEventHandler();
+        public event OnThumbStickReleasedEventHandler OnThumbStickReleased;
 
         private decimal lastx = 0;
         private decimal lasty = 0;
@@ -141,6 +147,8 @@ namespace ControllerX
             }
         }
 
+        private bool held = false;
+
         public void RegisterValue(decimal x, decimal y)
         {
             //Normalize the values
@@ -157,7 +165,21 @@ namespace ControllerX
             Scale(ref x);
             Scale(ref y);
 
+            if (x == 0 && y == 0)
+            {
+                if (held)
+                {
+                    held = false;
+                    RaiseThumbStickMovedEvent(x, y, magnitude);
+                    OnThumbStickReleased?.Invoke();
+                }
+
+                return;
+            }
+
             RaiseThumbStickMovedEvent(x,y,magnitude);
+
+            held = true;
 
         }
 

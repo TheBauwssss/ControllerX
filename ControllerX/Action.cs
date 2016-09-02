@@ -16,6 +16,15 @@ namespace ControllerX
             Simulator = new InputSimulator();
         }
 
+        public ControllerMapping MappingParent { get; set; }
+
+        protected Action() { }
+
+        protected Action(ControllerMapping parent)
+        {
+            MappingParent = parent;
+        }
+
         public enum MouseOption
         {
             Left = 1,
@@ -28,6 +37,44 @@ namespace ControllerX
 
         public static InputSimulator Simulator { get; set; }
 
-        public abstract void Execute(State state, GamepadButtonFlags mapping);
+        public abstract void Execute(State state, Mapping mapping);
+    }
+
+    abstract class StickAction : Action
+    {
+
+        protected ThumbStickHandler _handler;
+
+        protected StickAction()
+        {
+            _handler = new ThumbStickHandler();
+            _handler.OnThumbStickMoved += Handler_OnThumbStickMoved;
+        }
+
+        protected StickAction(ControllerMapping parent) : base (parent)
+        {
+            _handler = new ThumbStickHandler();
+            _handler.OnThumbStickMoved += Handler_OnThumbStickMoved;
+        }
+
+        public abstract void Handler_OnThumbStickMoved(decimal x, decimal y, decimal magnitude);
+
+        public override void Execute(State state, Mapping mapping)
+        {
+            short x, y;
+
+            if (mapping.Control == GamepadButtonFlags.LeftThumb)
+            {
+                x = state.Gamepad.LeftThumbX;
+                y = state.Gamepad.LeftThumbY;
+            }
+            else
+            {
+                x = state.Gamepad.RightThumbX;
+                y = state.Gamepad.RightThumbY;
+            }
+
+            _handler.RegisterValue(x, y);
+        }
     }
 }

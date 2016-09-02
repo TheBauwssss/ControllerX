@@ -1,0 +1,33 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ControllerX"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="ControllerX.DebugWindow"
+        mc:Ignorable="d"
+        Title="DebugWindow" Height="503.2" Width="670.4" Loaded="Window_Loaded">
+    <Grid>
+
+        <GroupBox x:Name="groupBox" Header="Control" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="393" Width="245">
+            <Grid Margin="0">
+                <Button x:Name="btnInitialize" Content="Initialize Controller" Margin="10" VerticalAlignment="Top" Height="30" Click="btnInitialize_Click"/>
+                <xctk:IntegerUpDown x:Name="numSensitivity" HorizontalAlignment="Right" Margin="0,115,10,0" VerticalAlignment="Top" Width="84" Height="30" Value="0" ClipValueToMinMax="True" Minimum="100" Maximum="20000" DefaultValue="100" ValueChanged="numSensitivity_ValueChanged" />
+                <Label x:Name="label_Copy" Content="Sensitivity (px/sec)" Margin="10,115,99,0" VerticalAlignment="Top" Height="30"/>
+                <xctk:IntegerUpDown x:Name="numMovementThreshold" HorizontalAlignment="Right" Margin="0,150,10,0" VerticalAlignment="Top" Width="84" Height="30" Value="0" ClipValueToMinMax="True" Minimum="0" Maximum="100" FormatString="0 '%" ValueChanged="numMovementThreshold_ValueChanged" />
+                <Label x:Name="lblMoveThreshold" Content="Movement Threshold" Margin="10,150,99,0" VerticalAlignment="Top" Height="30"/>
+                <Label x:Name="label_Copy2" Content="Movement Scaling" Margin="10,45,113.8,0" VerticalAlignment="Top" Height="30"/>
+                <ComboBox x:Name="comboMoveScaling" HorizontalAlignment="Right" Margin="0,45,9.8,0" VerticalAlignment="Top" Width="99" Height="30" SelectedIndex="2" SelectionChanged="comboMoveScaling_SelectionChanged"  />
+                <xctk:IntegerUpDown x:Name="numLeftDeadzone" HorizontalAlignment="Right" Margin="0,220,10,0" VerticalAlignment="Top" Width="84" Height="30" Value="0" ClipValueToMinMax="True" Minimum="0" Maximum="32767" ValueChanged="numLeftDeadzone_ValueChanged" />
+                <Label x:Name="lblLeftDeadzone" Content="Left Deadzone" Margin="10,220,99,0" VerticalAlignment="Top" Height="30"/>
+                <xctk:IntegerUpDown x:Name="numRightDeadzone" HorizontalAlignment="Right" Margin="0,255,10,0" VerticalAlignment="Top" Width="84" Height="30" Value="0" ClipValueToMinMax="True" Minimum="0" Maximum="32767" ValueChanged="numRightDeadzone_ValueChanged" />
+                <Label x:Name="lblRightDeadzone" Content="Right Deadzone" Margin="10,255,99,0" VerticalAlignment="Top" Height="30"/>
+                <xctk:IntegerUpDown x:Name="numCursorThreshold" HorizontalAlignment="Right" Margin="0,185,10,0" VerticalAlignment="Top" Width="84" Height="30" Value="0" ClipValueToMinMax="True" Minimum="0" Maximum="100" FormatString="0 '%" ValueChanged="numCursorThreshold_ValueChanged" />
+                <Label x:Name="lblLookThreshold" Content="Cursor Threshold" Margin="10,185,99,0" VerticalAlignment="Top" Height="30"/>
+                <Label x:Name="label_Copy1" Content="Cursor Scaling" Margin="10,80,113.8,0" VerticalAlignment="Top" Height="30"/>
+                <ComboBox x:Name="comboCursorScaling" HorizontalAlignment="Right" Margin="0,80,9.8,0" VerticalAlignment="Top" Width="99" Height="30" SelectedIndex="2" SelectionChanged="comboCursorScaling_SelectionChanged" />
+            </Grid>
+        </GroupBox>
+
+    </Grid>
+</Window>

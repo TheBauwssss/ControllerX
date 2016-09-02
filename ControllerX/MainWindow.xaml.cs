@@ -281,12 +281,12 @@ namespace ControllerX
 
             CheckKey(state, GamepadButtonFlags.LeftShoulder, ref l_shoulder_state, ()=>
             {
-                sim.Mouse.HorizontalScroll(-3);
+                sim.Mouse.HorizontalScroll(-1);
             }, null);
 
             CheckKey(state, GamepadButtonFlags.RightShoulder, ref r_shoulder_state, () =>
             {
-                sim.Mouse.HorizontalScroll(3);
+                sim.Mouse.HorizontalScroll(1);
             }, null);
 
 

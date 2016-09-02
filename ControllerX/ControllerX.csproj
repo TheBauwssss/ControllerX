@@ -99,9 +99,17 @@
     </ApplicationDefinition>
     <Compile Include="Actions.cs" />
     <Compile Include="Action.cs" />
+    <Compile Include="ControllerConfiguration.cs" />
     <Compile Include="ControllerMapping.cs" />
+    <Compile Include="DebugWindow.xaml.cs">
+      <DependentUpon>DebugWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Mapping.cs" />
     <Compile Include="ThumbStickHandler.cs" />
+    <Page Include="DebugWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
