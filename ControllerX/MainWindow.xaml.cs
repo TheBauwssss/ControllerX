@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +20,7 @@ using WindowsInput.Native;
 using DeviceManagement;
 using SharpDX.XInput;
 using Xceed.Wpf.Toolkit;
+using Brushes = System.Windows.Media.Brushes;
 using Cursor = System.Windows.Forms.Cursor;
 
 namespace ControllerX
@@ -153,15 +155,6 @@ namespace ControllerX
             
         }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
-            controller = new Controller(UserIndex.One);
-
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(10);
-            timer.Tick += Timer_Tick;
-            timer.Start();
-        }
 
         private bool ldown = false;
         private bool rdown = false;
@@ -220,9 +213,85 @@ namespace ControllerX
             }
         }
 
+        public void SetControllerConnectedState(bool connected)
+        {
+            if (!Application.Current.Dispatcher.CheckAccess())
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetControllerConnectedState(connected);
+                });
+
+                return;
+            }
+
+            if (connected)
+            {
+                lblControllerState.Foreground = Brushes.Green;
+                lblControllerState.Content = "Player 1";
+            }
+            else
+            {
+                lblControllerState.Foreground = Brushes.Red;
+                lblControllerState.Content = "Not connected";
+            }
+        }
+
+        public enum ConnectionState
+        {
+            Success = 1,
+            Connecting = 2,
+            Error = 3
+        }
+
+        public void SetConnectionState(ConnectionState s)
+        {
+            if (!Application.Current.Dispatcher.CheckAccess())
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetConnectionState(s);
+                });
+
+                return;
+            }
+
+            switch (s)
+            {
+                case ConnectionState.Success:
+                    lblState.Foreground = System.Windows.Media.Brushes.Green;
+                    lblState.Content = "Connected";
+                    break;
+                case ConnectionState.Connecting:
+                    lblState.Foreground = System.Windows.Media.Brushes.Orange;
+                    lblState.Content = "Connecting";
+                    break;
+                case ConnectionState.Error:
+                    lblState.Foreground = System.Windows.Media.Brushes.Red;
+                    lblState.Content = "Disconnected";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(s), s, null);
+            }
+        }
+
         private void Timer_Tick(object sender, EventArgs e)
         {
-            var state = controller.GetState();
+            State state;
+
+            try
+            {
+                state = controller.GetState();
+
+                SetControllerConnectedState(true);
+            }
+            catch (Exception)
+            {
+                SetControllerConnectedState(false);
+                timer.Stop();
+                autoConnectionTimer.Start();
+                return;
+            }
 
             var b = new StringBuilder();
 
@@ -238,7 +307,7 @@ namespace ControllerX
                 if (!ldown)
                 {
                     sim.Mouse.RightButtonDown();
-                    
+
                     ldown = true;
                 }
             }
@@ -278,19 +347,9 @@ namespace ControllerX
             CheckKey(state, GamepadButtonFlags.Start, ref start_state, VirtualKeyCode.ESCAPE);
 
 
+            CheckKey(state, GamepadButtonFlags.LeftShoulder, ref l_shoulder_state, () => { sim.Mouse.HorizontalScroll(-1); }, null);
 
-            CheckKey(state, GamepadButtonFlags.LeftShoulder, ref l_shoulder_state, ()=>
-            {
-                sim.Mouse.HorizontalScroll(-1);
-            }, null);
-
-            CheckKey(state, GamepadButtonFlags.RightShoulder, ref r_shoulder_state, () =>
-            {
-                sim.Mouse.HorizontalScroll(1);
-            }, null);
-
-
-            
+            CheckKey(state, GamepadButtonFlags.RightShoulder, ref r_shoulder_state, () => { sim.Mouse.HorizontalScroll(1); }, null);
 
 
             b.AppendFormat("Triggers: \n\t R:\t{0}\n\t L:\t{1}\n", triggerR, triggerL);
@@ -425,6 +484,50 @@ namespace ControllerX
 
             left.SensitivityThreshold = (int) (sender as IntegerUpDown).Value;
             right.SensitivityThreshold = (int) (sender as IntegerUpDown).Value;
+        }
+
+        private void button1_Copy_Click(object sender, RoutedEventArgs e)
+        {
+            new DebugWindow().Show();
+        }
+
+        private Timer autoConnectionTimer;
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            controller = new Controller(UserIndex.One);
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(10);
+            timer.Tick += Timer_Tick;
+
+            autoConnectionTimer = new Timer(1000);
+            autoConnectionTimer.Elapsed += AutoConnectionTimer_Elapsed;
+            autoConnectionTimer.Start();
+        }
+
+        private void AutoConnectionTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            SetConnectionState(ConnectionState.Connecting);
+
+            try
+            {
+                var state = controller.GetState();
+
+                //no error
+                timer.Start();
+                autoConnectionTimer.Stop();
+
+                SetConnectionState(ConnectionState.Success);
+            }
+            catch (Exception ex)
+            {
+                //not good
+                timer.Stop();
+                //try again in 1 sec
+
+                SetConnectionState(ConnectionState.Error);
+            }
         }
     }
 }

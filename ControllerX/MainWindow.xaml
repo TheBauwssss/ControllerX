@@ -6,12 +6,10 @@
         xmlns:local="clr-namespace:ControllerX"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock" x:Class="ControllerX.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="557.5" Width="985">
+        Title="MainWindow" Height="557.5" Width="985" Loaded="Window_Loaded">
     <Grid>
         <GroupBox x:Name="groupBox" Header="Control" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="242" Width="245">
             <Grid Margin="0">
-                <Button x:Name="button" Content="Discover Devices" Margin="10" VerticalAlignment="Top" Click="button_Click" Height="30"/>
-                <Button x:Name="button1" Content="Initialize Controller" Margin="10,45,10,0" VerticalAlignment="Top" Click="button1_Click" Height="30"/>
                 <xctk:IntegerUpDown x:Name="deadzone" HorizontalAlignment="Right" Margin="0,115,10,0" VerticalAlignment="Top" Width="84" Height="30" Value="5000" ClipValueToMinMax="True" Minimum="0" Maximum="32767" ValueChanged="deadzone_ValueChanged"/>
                 <Label x:Name="label" Content="Stick Deadzone" Margin="10,115,99,0" VerticalAlignment="Top" Height="30"/>
                 <xctk:IntegerUpDown x:Name="sensitivity" HorizontalAlignment="Right" Margin="0,150,10,0" VerticalAlignment="Top" Width="84" Height="30" Value="2000" ClipValueToMinMax="True" Minimum="0" Maximum="32767" ValueChanged="sensitivity_ValueChanged"/>
@@ -21,6 +19,10 @@
                 <Label x:Name="label_Copy2" Content="Sensitivity Scaling" Margin="10,80,114,0" VerticalAlignment="Top" Height="30"/>
                 <ComboBox x:Name="comboSensitivityScale" HorizontalAlignment="Right" Margin="124,80,10,0" VerticalAlignment="Top" Width="99" Height="30" SelectedIndex="2" Loaded="comboSensitivityScale_Loaded" SelectionChanged="comboSensitivityScale_SelectionChanged">
                 </ComboBox>
+                <Label x:Name="lblStateLabel" Content="Controller State" Margin="10,10,113.8,0" VerticalAlignment="Top" Height="30"/>
+                <Label x:Name="lblState" Content="Not connected" Margin="124,10,9.8,0" VerticalAlignment="Top" Height="30" Background="{x:Null}" Foreground="Red"/>
+                <Label x:Name="lblControllerStateLabel" Content="Controller State" Margin="10,45,113.8,0" VerticalAlignment="Top" Height="30"/>
+                <Label x:Name="lblControllerState" Content="Not connected" Margin="124,45,9.8,0" VerticalAlignment="Top" Height="30" Background="{x:Null}" Foreground="Red"/>
             </Grid>
         </GroupBox>
         <GroupBox x:Name="groupBox1" Header="Debug" HorizontalAlignment="Left" Margin="260,10,0,10" Width="707">
@@ -31,6 +33,7 @@
                 <Label x:Name="cursor" Content="Label" FontFamily="Consolas" FontSize="18.667"/>
             </StackPanel>
         </GroupBox>
+        <Button x:Name="button1_Copy" Content="Debug Window" Margin="10,488,755.4,0" VerticalAlignment="Top" Height="30" Click="button1_Copy_Click"/>
 
     </Grid>
 </Window>
