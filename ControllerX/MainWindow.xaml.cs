@@ -170,6 +170,9 @@ namespace ControllerX
         private bool l_shoulder_state = false;
         private bool r_shoulder_state = false;
 
+        private bool l_thumb_state = false;
+        private bool r_thumb_state = false;
+
         public void CheckKey(State state, GamepadButtonFlags button, ref bool state_var, VirtualKeyCode key)
         {
             if (state.Gamepad.Buttons.HasFlag(button))
@@ -347,9 +350,12 @@ namespace ControllerX
             CheckKey(state, GamepadButtonFlags.Start, ref start_state, VirtualKeyCode.ESCAPE);
 
 
-            CheckKey(state, GamepadButtonFlags.LeftShoulder, ref l_shoulder_state, () => { sim.Mouse.HorizontalScroll(-1); }, null);
+            CheckKey(state, GamepadButtonFlags.LeftShoulder, ref l_shoulder_state, () => { sim.Mouse.VerticalScroll(1); }, null);
 
-            CheckKey(state, GamepadButtonFlags.RightShoulder, ref r_shoulder_state, () => { sim.Mouse.HorizontalScroll(1); }, null);
+            CheckKey(state, GamepadButtonFlags.RightShoulder, ref r_shoulder_state, () => { sim.Mouse.VerticalScroll(-1); }, null);
+
+            CheckKey(state, GamepadButtonFlags.LeftThumb, ref l_thumb_state, VirtualKeyCode.SHIFT);
+            CheckKey(state, GamepadButtonFlags.RightThumb, ref r_thumb_state, VirtualKeyCode.CONTROL);
 
 
             b.AppendFormat("Triggers: \n\t R:\t{0}\n\t L:\t{1}\n", triggerR, triggerL);
