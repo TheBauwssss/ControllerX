@@ -1,4 +1,7 @@
-﻿using System;
+﻿
+#define DSIEGE
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -118,20 +121,20 @@ namespace ControllerX
             thumbL.Content = string.Format("Thumbstick Left:\n\t\tX: {0}\n\t\tY: {1}\n\t\tM: {2}", Math.Round(x, precision), Math.Round(y, precision), Math.Round(magnitude, precision));
 
             if (x < -1*threshold)
-                sim.Keyboard.KeyDown(VirtualKeyCode.VK_A); //left
-            else sim.Keyboard.KeyUp(VirtualKeyCode.VK_A);
+                sim.Keyboard.KeyDown(VirtualKeyCode.LEFT); //left
+            else sim.Keyboard.KeyUp(VirtualKeyCode.LEFT);
 
             if (x > threshold)
-                sim.Keyboard.KeyDown(VirtualKeyCode.VK_D); //right
-            else sim.Keyboard.KeyUp(VirtualKeyCode.VK_D);
+                sim.Keyboard.KeyDown(VirtualKeyCode.RIGHT); //right
+            else sim.Keyboard.KeyUp(VirtualKeyCode.RIGHT);
 
             if (y < -1 * threshold)
-                sim.Keyboard.KeyDown(VirtualKeyCode.VK_S); //down
-            else sim.Keyboard.KeyUp(VirtualKeyCode.VK_S);
+                sim.Keyboard.KeyDown(VirtualKeyCode.DOWN); //down
+            else sim.Keyboard.KeyUp(VirtualKeyCode.DOWN);
 
             if (y > threshold)
-                sim.Keyboard.KeyDown(VirtualKeyCode.VK_W); //up
-            else sim.Keyboard.KeyUp(VirtualKeyCode.VK_W);
+                sim.Keyboard.KeyDown(VirtualKeyCode.UP); //up
+            else sim.Keyboard.KeyUp(VirtualKeyCode.UP);
 
         }
 
@@ -341,6 +344,7 @@ namespace ControllerX
                 }
             }
 
+#if DSIEGE
             //CheckKey(state, GamepadButtonFlags.A, ref a_state, VirtualKeyCode.SPACE);
             CheckKey(state, GamepadButtonFlags.B, ref b_state, VirtualKeyCode.ESCAPE);
             //CheckKey(state, GamepadButtonFlags.X, ref b_state, VirtualKeyCode.SPACE);
@@ -356,7 +360,24 @@ namespace ControllerX
 
             CheckKey(state, GamepadButtonFlags.LeftThumb, ref l_thumb_state, VirtualKeyCode.SHIFT);
             CheckKey(state, GamepadButtonFlags.RightThumb, ref r_thumb_state, VirtualKeyCode.CONTROL);
+#else
 
+            //CheckKey(state, GamepadButtonFlags.A, ref a_state, VirtualKeyCode.SPACE);
+            CheckKey(state, GamepadButtonFlags.B, ref b_state, VirtualKeyCode.ESCAPE);
+            //CheckKey(state, GamepadButtonFlags.X, ref b_state, VirtualKeyCode.SPACE);
+            CheckKey(state, GamepadButtonFlags.Y, ref y_state, VirtualKeyCode.SPACE);
+
+            CheckKey(state, GamepadButtonFlags.Back, ref back_state, VirtualKeyCode.VK_E);
+            CheckKey(state, GamepadButtonFlags.Start, ref start_state, VirtualKeyCode.ESCAPE);
+
+
+            CheckKey(state, GamepadButtonFlags.LeftShoulder, ref l_shoulder_state, () => { sim.Mouse.VerticalScroll(1); }, null);
+
+            CheckKey(state, GamepadButtonFlags.RightShoulder, ref r_shoulder_state, () => { sim.Mouse.VerticalScroll(-1); }, null);
+
+            CheckKey(state, GamepadButtonFlags.LeftThumb, ref l_thumb_state, VirtualKeyCode.SHIFT);
+            CheckKey(state, GamepadButtonFlags.RightThumb, ref r_thumb_state, VirtualKeyCode.CONTROL);
+#endif
 
             b.AppendFormat("Triggers: \n\t R:\t{0}\n\t L:\t{1}\n", triggerR, triggerL);
 
